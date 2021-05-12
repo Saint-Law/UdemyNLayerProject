@@ -10,7 +10,7 @@ namespace UdemyNLayerProject.Core.Repositories
     {
         Task<TEntity> GetByIdAsync(int Id);
         Task<IEnumerable<TEntity>> GetAllAsync();
-        IEnumerable<TEntity> Where(Expression<Func<TEntity, bool>> predicate);
+        Task<IEnumerable<TEntity>> Where(Expression<Func<TEntity, bool>> predicate);
 
         //Category.SingleOrDefaultAsync(x=>x.name='saint')
         Task<TEntity>SingleOrDefaultAsync(Expression<Func<TEntity, bool>> predicate);

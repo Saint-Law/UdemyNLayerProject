@@ -10,14 +10,14 @@ namespace UdemyNLayerProject.Core.Services
     {
         Task<TEntity> GetByIdAsync(int Id);
         Task<IEnumerable<TEntity>> GetAllAsync();
-        Task<IEnumerable<TEntity>> Find(Expression<Func<TEntity, bool>> predicate);
+        Task<IEnumerable<TEntity>> where(Expression<Func<TEntity, bool>> predicate);
 
         //Category.SingleOrDefaultAsync(x=>x.name='saint')
         Task<TEntity> SingleOrDefaultAsync(Expression<Func<TEntity, bool>> predicate);
-        Task AddAsync(TEntity entity);
-        Task AddRangeAsync(IEnumerable<TEntity> entities);
+        Task<TEntity> AddAsync(TEntity entity);
+        Task<IEnumerable<TEntity>> AddRangeAsync(IEnumerable<TEntity> entities);
         void Remove(TEntity entity);
-        void RemoveRange(IEnumerable<TEntity> entity);
+        void RemoveRange(IEnumerable<TEntity> entities);
         TEntity Update(TEntity entity);
     }
 }
