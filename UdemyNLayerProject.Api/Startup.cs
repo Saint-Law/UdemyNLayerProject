@@ -19,6 +19,7 @@ using UdemyNLayerProject.Data.Repositories;
 using UdemyNLayerProject.Data.UnitOfWorks;
 using UdemyNLayerProject.Service.Services;
 using AutoMapper;
+using UdemyNLayerProject.Api.Filters;
 
 namespace UdemyNLayerProject.Api
 {
@@ -36,7 +37,7 @@ namespace UdemyNLayerProject.Api
         {
 
             services.AddAutoMapper(typeof(Startup));
-
+            services.AddScoped<NotFoundFilter>();
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped(typeof(IService<>), typeof(Service.Services.Service<>));
             services.AddScoped<ICategoryService, CategoryService>();
@@ -53,7 +54,10 @@ namespace UdemyNLayerProject.Api
             });           
            
 
-            services.AddControllers();
+            services.AddControllers(o => 
+            {
+                o.Filters.Add(new ValidationFilter());
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
