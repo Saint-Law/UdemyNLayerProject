@@ -29,6 +29,8 @@ namespace UdemyNLayerProject.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
+            throw new Exception("An error occurred while retrieving all data");
+
             var products = await _productService.GetAllAsync();
             return Ok(_mapper.Map<IEnumerable<ProductDto>>(products));
         }
@@ -59,6 +61,11 @@ namespace UdemyNLayerProject.Api.Controllers
         [HttpPut]
         public IActionResult Update(ProductDto productDto)
         {
+            if (string.IsNullOrEmpty(productDto.Id.ToString()) || productDto.Id <= 0)
+            {
+                throw new Exception("id field is required");
+            }
+
             var product = _productService.Update(_mapper.Map<Product>(productDto));
             return NoContent();
         }

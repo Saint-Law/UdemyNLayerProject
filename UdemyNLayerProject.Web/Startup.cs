@@ -1,16 +1,15 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using UdemyNLayerProject.Core.Repositories;
 using UdemyNLayerProject.Core.Services;
 using UdemyNLayerProject.Core.UnitOfWorks;
@@ -18,15 +17,8 @@ using UdemyNLayerProject.Data;
 using UdemyNLayerProject.Data.Repositories;
 using UdemyNLayerProject.Data.UnitOfWorks;
 using UdemyNLayerProject.Service.Services;
-using AutoMapper;
-using UdemyNLayerProject.Api.Filters;
-using Microsoft.AspNetCore.Diagnostics;
-using UdemyNLayerProject.Api.DTOs;
-using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
-using UdemyNLayerProject.Api.Extensions;
 
-namespace UdemyNLayerProject.Api
+namespace UdemyNLayerProject.Web
 {
     public class Startup
     {
@@ -40,9 +32,7 @@ namespace UdemyNLayerProject.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddAutoMapper(typeof(Startup));
-            services.AddScoped<NotFoundFilter>();
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped(typeof(IService<>), typeof(Service.Services.Service<>));
             services.AddScoped<ICategoryService, CategoryService>();
@@ -58,11 +48,7 @@ namespace UdemyNLayerProject.Api
                 });
             });
 
-
-            services.AddControllers(o => 
-            {
-                o.Filters.Add(new ValidationFilter());
-            });
+            services.AddControllersWithViews();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -72,10 +58,14 @@ namespace UdemyNLayerProject.Api
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.UseCustomException();            
-
-            app.UseHttpsRedirection(); 
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
+            }
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
 
             app.UseRouting();
 
@@ -83,7 +73,9 @@ namespace UdemyNLayerProject.Api
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }
