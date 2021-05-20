@@ -10,7 +10,7 @@ namespace UdemyNLayerProject.Web.DTOs
     {
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage =" {0} field cant be empty")]
         public string Name { get; set; }
     }
 }
