@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -10,14 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using UdemyNLayerProject.Core.Repositories;
-using UdemyNLayerProject.Core.Services;
-using UdemyNLayerProject.Core.UnitOfWorks;
-using UdemyNLayerProject.Data;
-using UdemyNLayerProject.Data.Repositories;
-using UdemyNLayerProject.Data.UnitOfWorks;
-using UdemyNLayerProject.Service.Services;
 using UdemyNLayerProject.Web.Filters;
+using UdemyNLayerProject.Web.ApiService;
 
 namespace UdemyNLayerProject.Web
 {
@@ -33,22 +26,14 @@ namespace UdemyNLayerProject.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<NotFoundFilter>();
-            services.AddAutoMapper(typeof(Startup));
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-            services.AddScoped(typeof(IService<>), typeof(Service.Services.Service<>));
-            services.AddScoped<ICategoryService, CategoryService>();
-            services.AddScoped<IProductService, ProductService>();
-
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-            services.AddDbContext<AppDbContext>(options =>
+            services.AddHttpClient<CategoryApiService>(opt =>
             {
-                options.UseSqlServer(Configuration["ConnectionStrings:SqlConStr"].ToString(), o =>
-                {
-                    o.MigrationsAssembly("UdemyNLayerProject.Data");
-                });
+                opt.BaseAddress = new Uri(Configuration["baseUrl"]);
             });
+
+
+            services.AddScoped<NotFoundFilter>();
+            services.AddAutoMapper(typeof(Startup));            
 
             services.AddControllersWithViews();
         }
